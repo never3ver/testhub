@@ -14,6 +14,7 @@ use Yii;
  */
 class Tag extends \yii\db\ActiveRecord
 {
+
     /**
      * @inheritdoc
      */
@@ -50,7 +51,7 @@ class Tag extends \yii\db\ActiveRecord
     {
         return $this->hasMany(TestTag::className(), ['tag_id' => 'id']);
     }
-    
+
     public function getTests()
     {
         return $this->hasMany(Test::className(), ['id' => 'test_id'])

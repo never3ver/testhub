@@ -4,6 +4,7 @@ use yii\grid\GridView;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\DetailView;
+use yii\widgets\ListView;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Test */
@@ -73,9 +74,19 @@ $this->params['breadcrumbs'][] = $this->title;
     ]);
     ?>
 
+    <div>
+        <?php
+        if (!empty($tags)) {
+            foreach ($tags as $title) {
+                echo Html::a($title, ['test/tagged-tests', 'title' => $title], ['class' => 'btn btn-link']);
+            }
+        }
+        ?>
+    </div>
+
     <?= $this->render('@app/views/question/create', ['model' => $newQuestion, 'id' => $model->id]); ?>
 
-    <?php // echo Html::a('Add question', ['question/create', 'id' => $model->id], ['class' => 'btn btn-success'])     ?>
+    <?php // echo Html::a('Add question', ['question/create', 'id' => $model->id], ['class' => 'btn btn-success'])      ?>
 
 </div>
 

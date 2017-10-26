@@ -91,4 +91,17 @@ class Test extends ActiveRecord
         TestTag::deleteAll(['test_id' => $this->id]);
     }
 
+    public function getTagTitles($id)
+    {
+        $this->id = $id;
+        $selectedTags = $this->getSelectedTags();
+        foreach ($selectedTags as $tag_id) {
+            $tag = Tag::findOne($tag_id);
+            $titles[] = $tag->title;
+        }
+        if (!empty($titles)) {
+            return $titles;
+        }
+    }
+
 }

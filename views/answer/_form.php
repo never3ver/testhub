@@ -12,7 +12,7 @@ use yii\widgets\Pjax;
 <div class="answer-form">
     <?php Pjax::begin(); ?>
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['options' => ['data-pjax' => true ]]); ?>
 
     <?= $form->field($model, 'question_id')->textInput() ?>
 

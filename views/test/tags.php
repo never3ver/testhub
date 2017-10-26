@@ -18,5 +18,7 @@ use yii\widgets\ActiveForm;
 
     <?php ActiveForm::end(); ?>
 
+    <?= $this->render('@app/views/tag/create', ['model' => $tag]); ?>
+    
 </div>
 

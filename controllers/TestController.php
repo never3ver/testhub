@@ -66,6 +66,8 @@ class TestController extends Controller
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
+        $test = new Test();
+        $tags = $test->getTagTitles($id);
 
         if ($newQuestion->load(Yii::$app->request->post()) && $newQuestion->save()) {
             if (!Yii::$app->request->isPjax) {
@@ -73,6 +75,7 @@ class TestController extends Controller
             }
         } else {
             return $this->render('view', [
+                        'tags' => $tags,
                         'model' => $this->findModel($id),
                         'newQuestion' => $newQuestion,
                         'questions' => $this->findQuestions($id),
@@ -156,7 +159,7 @@ class TestController extends Controller
         $session = Yii::$app->session;
         $answeredQuestions = $session['questions'];
         $session->destroy();
-        
+
         $correct = $this->countValues($answeredQuestions, TRUE);
         $count = count($answeredQuestions);
         $incorrect = array_keys($answeredQuestions, TRUE);
@@ -186,6 +189,49 @@ class TestController extends Controller
         $this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    public function actionSetTags($id)
+    {
+        $test = $this->findModel($id);
+        $selectedTags = $test->getSelectedTags();
+        $tags = ArrayHelper::map(Tag::find()->all(), 'id', 'title');
+        $tag = new Tag();
+
+        if (Yii::$app->request->isPost) {
+            if (Yii::$app->request->post('tags')) {
+                $tags = Yii::$app->request->post('tags');
+                $test->saveTags($tags);
+                return $this->redirect(['view', 'id' => $test->id]);
+            } else if (Yii::$app->request->post('Tag')) {
+                $post = Yii::$app->request->post('Tag');
+                $tag->title = $post['title'];
+                $tag->save();
+                if (!Yii::$app->request->isPjax) {
+                    return $this->redirect(['/test/set-tags', 'id' => $id]);
+                }
+            }
+        }
+        return $this->render('tags', [
+                    'selectedTags' => $selectedTags,
+                    'tags' => $tags,
+                    'tag' => $tag,
+        ]);
+    }
+
+    public function actionTaggedTests($title)
+    {
+
+        $tag = new Tag();
+        $tag = $tag->findOne(['title' => $title]);
+        $searchModel = new TestSearch();
+        $query = $tag->getTests();
+        $dataProvider = new ActiveDataProvider(['query' => $query,]);
+
+        return $this->render('index', [
+                    'searchModel' => $searchModel,
+                    'dataProvider' => $dataProvider,
+        ]);
     }
 
     /**
@@ -255,24 +301,6 @@ class TestController extends Controller
             }
         }
         return $i;
-    }
-
-    public function actionSetTags($id)
-    {
-        $test = $this->findModel($id);
-        $selectedTags = $test->getSelectedTags();
-        $tags = ArrayHelper::map(Tag::find()->all(), 'id', 'title');
-
-        if (Yii::$app->request->isPost) {
-            $tags = Yii::$app->request->post('tags');
-            $test->saveTags($tags);
-            return$this->redirect(['view', 'id' => $test->id]);
-        }
-
-        return $this->render('tags', [
-                    'selectedTags' => $selectedTags,
-                    'tags' => $tags,
-        ]);
     }
 
 }
